@@ -1,17 +1,20 @@
 import React, {useCallback, useState} from "react";
 import {Button, Error, Form, Header, Input, Label, LinkContainer, Success} from "./styles";
-import {Link} from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
 import useInput from "@hooks/useInput";
 import axios from "axios";
+import useSWR from "swr";
+import fetcher from "@utils/fetcher";
 
 const SignUp = () => {
+    const {data, error, revalidate} = useSWR('http://localhost:3095/api/users', fetcher);
     const [email, onChangeEmail] = useInput('');
-    const [nickname,onChangeNickname] = useInput('')
+    const [nickname, onChangeNickname] = useInput('')
     const [password, , setPassword] = useInput('');
     const [passwordCheck, , setPasswordCheck] = useInput('');
-    const [mismatchError,setMismatchError] = useState(false);
-    const [signUpError,setSignUpError] = useState('');
-    const [signUpSuccess,setSignUpSuccess] = useState(false);
+    const [mismatchError, setMismatchError] = useState(false);
+    const [signUpError, setSignUpError] = useState('');
+    const [signUpSuccess, setSignUpSuccess] = useState(false);
 
     const onChangePassword = useCallback((e) => {
         setPassword(e.target.value);
@@ -25,25 +28,32 @@ const SignUp = () => {
 
     const onSubmit = useCallback((e) => {
         e.preventDefault();
-        console.log(email,nickname,password,passwordCheck);
+        console.log(email, nickname, password, passwordCheck);
         console.log(mismatchError);
-        if(nickname && !mismatchError){
+        if (nickname && !mismatchError) {
             console.log('서버로 회원가입 하기');
             setSignUpError('');
             setSignUpSuccess(false);
-            axios.post("http://localhost:3095/api/users",{email,nickname,password})
-                .then((response)=>{
+            axios.post("http://localhost:3095/api/users", {email, nickname, password})
+                .then((response) => {
                     console.log(response);
                     setSignUpSuccess(true);
                 })
-                .catch((error)=>{
+                .catch((error) => {
                     console.log(error.response);
                     setSignUpError(error.response.data);
                 })
-                .finally(()=>{});
+                .finally(() => {
+                });
         }
-    }, [email,nickname,password,passwordCheck]);
+    }, [email, nickname, password, passwordCheck]);
+    if (data === undefined) {
+        return <div>로딩중...</div>
+    }
 
+    if (data) {
+        return <Redirect to="/workspace/channel"/>
+    }
     return (
         <div id="container">
             <Header>Sleact</Header>

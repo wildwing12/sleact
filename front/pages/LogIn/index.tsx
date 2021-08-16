@@ -4,9 +4,12 @@ import { Form, Error, Label, Input, LinkContainer, Button, Header } from '@pages
 import axios from 'axios';
 import React, { useCallback, useState } from 'react';
 import { Link, Redirect } from 'react-router-dom';
-//import useSWR from 'swr';
+import useSWR from "swr";
+import fetcher from "@utils/fetcher";
 
 const LogIn = () => {
+    const {data,error,revalidate} = useSWR('http://localhost:3095/api/users',fetcher,
+        {dedupingInterval:1000*60*5,});
     const [logInError, setLoginError]=useState(false);
     const [email,onChangeEmail] = useInput('');
     const [password, onChangePassword]=useInput('');
@@ -16,11 +19,19 @@ const LogIn = () => {
         setLoginError(false);
         axios.post('http://localhost:3095/api/users/login',{email,password},{withCredentials:true})
             .then(()=>{
-                // revalidate();
+                 revalidate();
             }).catch((error)=>{
                 setLoginError(error.response?.data?.status === 401);
         })
-    },[email, password])
+    },[email, password]);
+
+    if(data === undefined){
+        return <div>로딩중...</div>
+    }
+    if(data){
+        return <Redirect to="/workspace/channel" />
+    }
+
     return (
         <div id="container">
             <Header>Sleact</Header>
