@@ -8,18 +8,18 @@ import useSWR from "swr";
 import fetcher from "@utils/fetcher";
 
 const LogIn = () => {
-    const {data,error,revalidate} = useSWR('http://localhost:3095/api/users',fetcher,
-        {dedupingInterval:1000*60*5,});
+    const {data,error,revalidate, mutate} = useSWR('http://localhost:3095/api/users',fetcher,
+        {dedupingInterval:100000,});
     const [logInError, setLoginError]=useState(false);
     const [email,onChangeEmail] = useInput('');
     const [password, onChangePassword]=useInput('');
-
     const onSubmit = useCallback((e)=>{
         e.preventDefault();
         setLoginError(false);
         axios.post('http://localhost:3095/api/users/login',{email,password},{withCredentials:true})
-            .then(()=>{
-                 revalidate();
+            .then((response)=>{
+                 // revalidate();//서버에 요청해서 내 정보를 가저오는 것
+                mutate(response.data,false);//기존 데이터를 내 정보에 넣음.
             }).catch((error)=>{
                 setLoginError(error.response?.data?.status === 401);
         })
