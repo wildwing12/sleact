@@ -12,7 +12,7 @@ const App = () => {
             <Redirect exact path='/' to="/login"/>{/*다른페이지로 돌려주는 역활*/}
             <Route path="/login" component={LogIn}/>
             <Route path="/signup" component={SignUp}/>
-            <Route path="/workspace" component={Workspace} />
+            <Route path="/workspace/:workspace" component={Workspace} />
         </Switch>
     );
 }
