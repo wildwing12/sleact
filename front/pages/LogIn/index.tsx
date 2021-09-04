@@ -19,7 +19,7 @@ const LogIn = () => {
         axios.post('http://localhost:3095/api/users/login',{email,password},{withCredentials:true})
             .then((response)=>{
                  // revalidate();//서버에 요청해서 내 정보를 가저오는 것
-                mutate(response.data,false);//기존 데이터를 내 정보에 넣음.
+                revalidate();//기존 데이터를 내 정보에 넣음.
             }).catch((error)=>{
                 setLoginError(error.response?.data?.status === 401);
         })
@@ -29,7 +29,7 @@ const LogIn = () => {
         return <div>로딩중...</div>
     }
     if(data){
-        return <Redirect to="/workspace/sleact/channel/general" />
+        return <Redirect to={`/workspace/sleact/channel/일반`} />
     }
 
     return (

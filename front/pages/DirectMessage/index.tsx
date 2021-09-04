@@ -31,6 +31,7 @@ const DirectMessage = () => {
             },{
                 withCredentials:true
             }).then(() => {
+                revalidate();
                 setChat('');
             })
                 .catch(console.error);

@@ -67,7 +67,7 @@ const Workspace: VFC = () => {
   }, []);
 
   const { data: channelData } = useSWR<IChannel[]>(userData ? `${path}/api/workspaces/${workspace}/channels` : null, fetcher);
-  const { revalidate: revalidateMemberData } = useSWR<IChannel[]>(
+  const { data: memberData } = useSWR<IUser[]>(
     userData ? `${path}/api/workspaces/${workspace}/members` : null, fetcher);
   const [socket, disconnect] = useSocket(workspace);
 
@@ -159,7 +159,7 @@ const Workspace: VFC = () => {
       <WorkspaceWrapper>
         <Workspaces>{userData.Workspaces?.map((ws) => {
           return (
-            <Link key={ws.id} to={`/workspace/${123}/channel/일반`}>
+            <Link key={ws.id} to={`/workspace/${ws.url}/channel/일반`}>
               <WorkspaceButton>{ws.name.slice(0, 1).toUpperCase()}</WorkspaceButton>
             </Link>
           );
